@@ -2,8 +2,8 @@
  * Pig(Dice Game)
  */
 
-// Top Level Initial variables
-var scores, roundScore, activePlayer;
+// Variables
+var scores, roundScore, activePlayer, lastDiceValue, winningScore;
 
 // Helper functions for grabbing multiple elements
 const getDestructuredElementsByIds = (document) => {
@@ -26,6 +26,7 @@ const {
   dice,
   playerPanel0,
   playerPanel1,
+  finalScoreInput,
 } = getDestructuredElementsByIds(document);
 
 // Game Playing Function
@@ -75,7 +76,12 @@ btnRoll.addEventListener('click', () => {
   const diceValue = Math.floor(Math.random() * 6) + 1;
   const currentPlayerScore = document.getElementById(`current${activePlayer}`);
 
-  if (diceValue !== 1) {
+  if (diceValue === 6 && lastDiceValue === 6) {
+    scores[activePlayer] === 0;
+    const currentPlayerHoldedScore = document.getElementById(`score${activePlayer}`);
+    currentPlayerHoldedScore.textContent = scores[activePlayer];
+    nextPlayer();
+  } else if (diceValue !== 1) {
     dice.style.display = 'block';
     dice.src = `images/dice-${diceValue}.png`;
     roundScore += diceValue;
@@ -83,6 +89,8 @@ btnRoll.addEventListener('click', () => {
   } else {
     nextPlayer();
   }
+
+  lastDiceValue = diceValue;
 });
 
 // Listener event (click) for Hold Button: Perform logic!
@@ -90,7 +98,14 @@ btnHold.addEventListener('click', () => {
   scores[activePlayer] += roundScore;
   const currentPlayerHoldedScore = document.getElementById(`score${activePlayer}`);
   currentPlayerHoldedScore.textContent = scores[activePlayer];
-  if (scores[activePlayer] >= 100) {
+
+  if (finalScoreInput.value) {
+    winningScore = finalScoreInput.value;
+  } else {
+    winningScore = 30;
+  }
+
+  if (scores[activePlayer] >= winningScore) {
     const currentPlayerName = document.getElementById(`name${activePlayer}`);
     currentPlayerName.textContent = 'Winner';
 
